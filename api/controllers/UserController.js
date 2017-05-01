@@ -17,13 +17,13 @@ module.exports = {
 
     if(req.method == "POST") {
 
-      var user = req.param('username'),
-        pass = req.param('password');
+      var user = req.param('uname');
+
+      console.log(user);
 
       return res.json({
         status: 'Success',
-        username: user,
-        password: pass
+        username: user
       });
     }
     else{

@@ -127,7 +127,7 @@ module.exports = {
           }catch (error){
             console.error(error);
             return res.json({user_id: "error"});
-          }//end catch
+          }
 
         });//end find
       }//end func

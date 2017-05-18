@@ -17,11 +17,9 @@ module.exports = {
 
     if(req.method == "POST") {
 
-<<<<<<< HEAD
       var user = req.param('uname');
 
       console.log(user);
-=======
       /* this will use in real system
 
        var gender = req.param('gender'),
@@ -34,7 +32,6 @@ module.exports = {
 
        });
        */
->>>>>>> 03e1df0233c5e50def54425dff58597e5b320b1f
 
       return res.json({
         status: 'Success',
@@ -94,7 +91,6 @@ module.exports = {
    */
   Login: function (req, res) {
     if(req.method == "GET") {
-
 
       function defineValue(callback) {
         //get post data from view

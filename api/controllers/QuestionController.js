@@ -1,21 +1,20 @@
 /**
  * Created by Varit on 5/29/17.
  */
-var async = require('async');
+var async = require('async'),
+  error_msg = "Bad Request/ Error";
+
+function returnQuestion(question_list) {
+  return res.json({
+    question_list: question_list
+  })
+}
 
 module.exports = {
 
   GetQuestion: function (req,res) {
 
-    var error_msg = "Bad Request/ Error";
-
     if(req.method== "GET"){
-
-      function returnQuestion(question_list) {
-        return res.json({
-          question_list: question_list
-        })
-      }
 
       /*
       * feature: make a query for the questions's content
@@ -80,6 +79,46 @@ module.exports = {
           question_list: question_list
         })
 
+      });
+
+    }
+    else{
+      returnQuestion(error_msg);
+    }
+
+  },//end action
+
+  MakeNewQuestion: function (req,res) {
+
+    if(req.method == "POST"){
+
+      var question_name = param('question_name'),
+        category_id = param('category_id'),
+        user_id = param('user_id'),
+        user_question_id = 1;
+
+      function questionRecord(callback) {
+        var question_query = {
+          category_id: category_id,
+          question_type_id:user_question_id,
+          question_name: question_name
+        };
+
+        Question.create(question_query).exec(function (err, insert_result) {
+          callback(null, insert_result);
+        })
+      }
+
+      async.waterfall([
+        questionRecord
+      ],function (err, result) {
+
+        if(err){console.error(err);}
+        console.log(result);
+        res.json({
+          status:"Success"
+        });
+        
       });
 
     }

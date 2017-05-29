@@ -120,6 +120,8 @@ module.exports = {
               return res.json({user_id: "not found"});
             }
             else if (found.length > 0) {//login succeed
+
+              req.session.user_id = found[0].user_id;
               return res.json({user_id: found[0].user_id});
             }
             else {
@@ -150,9 +152,31 @@ module.exports = {
   /**
    * `UserController.Info()`
    */
-  Info: function (req, res) {
-    return res.json({
-      todo: 'Info() is not implemented yet!'
-    });
+  Profile: function (req, res) {
+
+    if(req.method == "GET"){
+
+      var user_id = req.param('user_id'),
+        profile_query = {
+          select:['username','email','postcode'],//in future will select user_similarity and image link
+          where:{user_id: user_id}
+        };
+
+      User.find(profile_query).exec(function (err, records) {
+        return res.json({
+          username: records[0].username,
+          email: records[0].email,
+          postcode: records[0].postcode
+
+        })
+      });
+
+    }
+    else {
+
+      return res.json({
+        todo: 'Info() is not implemented yet!'
+      });
+    }
   }
 };

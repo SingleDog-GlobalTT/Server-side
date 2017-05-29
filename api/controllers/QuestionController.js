@@ -26,7 +26,13 @@ module.exports = {
       * */
       function queryQuestion(question_type_id,callback) {
 
-        var question_query;
+        var question_query,
+          question_num = param('question_num'),
+          question_num_default = 14;
+
+        if(question_num == null){
+          question_num = question_num_default;
+        }
 
         if(question_type_id == 0){
           question_query = {
@@ -36,7 +42,8 @@ module.exports = {
         else {
           question_query = {
             select: ['question_name'],
-            where: {question_type:question_type_id}
+            where: {question_type:question_type_id},
+            limit: question_num
           };
         }
 
@@ -118,7 +125,7 @@ module.exports = {
         res.json({
           status:"Success"
         });
-        
+
       });
 
     }

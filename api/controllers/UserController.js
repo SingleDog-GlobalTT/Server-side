@@ -117,7 +117,7 @@ module.exports = {
           console.log(found);
           try {
             if (found.length == 0) {//login failed
-              return res.json({user_id: "not found"});
+              return res.json({user_id: 0});
             }
             else if (found.length > 0) {//login succeed
 

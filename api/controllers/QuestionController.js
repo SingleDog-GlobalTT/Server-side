@@ -4,7 +4,7 @@
 var async = require('async'),
   error_msg = "Bad Request/ Error";
 
-function returnQuestion(question_list) {
+function returnQuestion(res,question_list) {
   return res.json({
     question_list: question_list
   })
@@ -14,7 +14,7 @@ module.exports = {
 
   GetQuestion: function (req,res) {
 
-    if(req.method== "GET"){
+    if(req.method == "GET"){
 
       /*
       * feature: make a query for the questions's content
@@ -27,7 +27,7 @@ module.exports = {
       function queryQuestion(question_type_id,callback) {
 
         var question_query,
-          question_num = param('question_num'),
+          question_num = req.param('question_num'),
           question_num_default = 14;
 
         if(question_num == null){
@@ -35,19 +35,22 @@ module.exports = {
         }
 
         if(question_type_id == 0){
-          question_query = {
-            select: ['question_name']
-          };
+          question_query = "SELECT question.question_name, question.user_id, user.username \n"+
+                            "FROM `question` \n"+
+                            "INNER JOIN user \n"+
+                            "ON question.user_id = user.user_id";
         }
         else {
+          /*
           question_query = {
             select: ['question_name'],
             where: {question_type:question_type_id},
             limit: question_num
           };
+          */
         }
 
-        Question.find(question_query).exec(function (err, question_name) {
+        Question.query(question_query,function (err, question_name) {
           callback(null, question_name);
         });
 
@@ -99,9 +102,9 @@ module.exports = {
 
     if(req.method == "POST"){
 
-      var question_name = param('question_name'),
-        category_id = param('category_id'),
-        user_id = param('user_id'),
+      var question_name = req.param('question_name'),
+        category_id = req.param('category_id'),
+        user_id = req.param('user_id'),
         user_question_id = 1;
 
       function questionRecord(callback) {
@@ -121,7 +124,7 @@ module.exports = {
       ],function (err, result) {
 
         if(err){console.error(err);}
-        console.log(result);
+        console.log("Record new question into the DB \n", result);
         res.json({
           status:"Success"
         });
@@ -130,7 +133,7 @@ module.exports = {
 
     }
     else{
-      returnQuestion(error_msg);
+      returnQuestion(res,error_msg);
     }
 
   }

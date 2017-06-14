@@ -107,6 +107,9 @@ module.exports = {
         user_id = req.param('user_id'),
         user_question_id = 1;
 
+
+      question.findOrCreate();
+
       function questionRecord(callback) {
         var question_query = {
           category_id: category_id,

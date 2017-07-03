@@ -44,22 +44,20 @@ module.exports = {
 
           console.log("question_type_id: ", question_type_id);
 
-          question_query = {
-            select: ['question_name'],
-            where: {question_type:question_type_id},
-            limit: question_num
-          };
+          question_query = "SELECT question.question_name, question.user_id, user.username \n"+
+            "FROM `question` \n"+
+            "INNER JOIN user \n"+
+            "ON question.question_type_id = "+ question_type_id
 
         }
         else if(question_type_id == 2){
 
           console.log("question_type_id: ", question_type_id);
 
-          question_query = {
-            select: ['question_name'],
-            where: {question_type:question_type_id},
-            limit: question_num
-          };
+          question_query = "SELECT question.question_name, question.user_id, user.username \n"+
+            "FROM `question` \n"+
+            "INNER JOIN user \n"+
+            "ON question.question_type_id = "+ question_type_id
         }
 
         Question.query(question_query,function (err, question_name) {

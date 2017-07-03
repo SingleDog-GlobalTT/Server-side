@@ -9,9 +9,6 @@ module.exports = {
       primaryKey: true,
       unique: true
     },
-    question_id:{
-      type: 'integer'
-    },
     category_id:{
       type: 'integer'
     },

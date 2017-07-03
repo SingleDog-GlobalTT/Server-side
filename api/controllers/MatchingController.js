@@ -16,14 +16,19 @@ module.exports = {
     if(req.method == "POST"){
 
       var answer = req.param('answer_value'),
+        category_id = req.param('category_id'),
+        user_id = req.param('user_id'),
+        answer_value = answer.answer_value,
         answer_num = answer.answer_value.length;
+
+      console.log("answer_value: ", answer_value, "category_id: " ,category_id, "user_id: ", user_id);
 
       function answerCalculate(callback) {
 
         var answer_yes = 1,
           answer_no = -1,
           answer_non = 0,
-          category_id = [0,0,0,0];
+          category_value = [0,0,0,0];
 
 
         function addValue(category_number, answer_value) {
@@ -31,10 +36,10 @@ module.exports = {
           console.log("added value", category_number, answer_value);
 
           if(answer_value == answer_yes) {
-            category_id[category_number]++;
+            category_value[category_number]++;
           }
           else if(answer_value == answer_no){
-            category_id[category_number]--;
+            category_value[category_number]--;
           }
         }
 
@@ -55,19 +60,25 @@ module.exports = {
 
         }// end loop
 
-        callback(null, category_id);
+        callback(null, category_value);
 
-      }
+      }//end func
 
-      function answerRecord(category_id, callback) {
+      function answerRecord(category_value, callback) {
 
-        for(var i=0; i< category_id.length; i++)
-        answer_query = {
-          question_id: 1,
-          category_id: i+1
-        };
+        for(var i=0; i< answer_value.length; i++) {
+          var answer_query = {
+            category_id: category_id[i],
+            user_id: user_id,
+            value: category_value
+          };
 
-        callback(null, category_id);
+          AnswerLog.create(answer_query).exec(function (err, created) {
+            console.log(created);
+          });
+        }
+
+        callback(null, category_value);
 
       }
 

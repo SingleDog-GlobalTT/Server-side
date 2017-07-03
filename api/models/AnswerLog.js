@@ -18,9 +18,10 @@ module.exports = {
     user_id:{
       type: 'integer'
     },
-    value:{
+    value: {
       type: 'float',
       size: 100
     }
+
   }
 };

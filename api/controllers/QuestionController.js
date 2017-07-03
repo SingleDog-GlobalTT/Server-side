@@ -37,8 +37,8 @@ module.exports = {
         if(question_type_id == 0){
           question_query = "SELECT question.question_name, question.user_id, user.username \n"+
                             "FROM `question` \n"+
-                            "INNER JOIN user \n"+
-                            "ON question.user_id = user.user_id";
+                            "INNER JOIN user \n";
+                            //"ON question.user_id = user.user_id";
         }
         else {
           /*
@@ -69,7 +69,7 @@ module.exports = {
         else if(question_type == 2){//for query the admin's question
           callback(null, 2);
         }
-        else if(question_type == null){// for query all the question
+        else if(question_type == null || question_type==0){// for query all the question
           callback(null, 0);
         }
         else{//for error case

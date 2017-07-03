@@ -13,19 +13,12 @@ module.exports = {
 
     var error_msg = "Bad Request/ Error";
 
-    function returnResult(answer_list) {
-      return res.json({
-        answer_list: answer_list
-      })
-    }
-
     if(req.method == "POST"){
 
       var answer = req.param('answer_value'),
-        answer_num = answer.answer_value.length,
-        category_value;
+        answer_num = answer.answer_value.length;
 
-      function answerCalculate() {
+      function answerCalculate(callback) {
 
         var answer_yes = 1,
           answer_no = -1,
@@ -62,13 +55,27 @@ module.exports = {
 
         }// end loop
 
-        return category_id;
+        callback(null, category_id);
 
       }
 
-      category_value = answerCalculate();
-      console.log("category_value: ", category_value);
-      returnResult(category_value);
+      function answerRecord(category_id) {
+
+        for(var i=0; i< category_id.length; i++)
+        answer_query = {
+          question_id: 1,
+          category_id: i+1
+        };
+      }
+
+      async.waterfall([
+        answerCalculate,
+        answerRecord
+      ], function (err,answer_list) {
+        return res.json({
+          answer_list: answer_list
+        })
+      });
     }
     else{
       returnResult(error_msg);

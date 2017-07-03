@@ -6,7 +6,7 @@
  */
 
 var async = require('async'),
-   typeOf = require('typeof');;
+   typeOf = require('typeof');
 
 module.exports = {
 
@@ -18,8 +18,19 @@ module.exports = {
 
     if(req.method == "POST") {
 
-      /*-----------THIS IS FOR TEST/DEBUG-----------------*/
-      function defineValue(callback) {
+      function findUserId(callback) {
+        var last_id_query = {
+          select: ['user_id'],
+          sort: 'user_id DESC'
+        };
+        User.find(last_id_query, function (err, last_id) {
+          console.log(last_id[0].user_id);
+          callback(null, last_id[0].user_id+1); //id of registering user
+        });
+
+      }
+
+      function defineValue(user_id, callback) {
 
         var gender = req.param('gender'),
           username = req.param('username'),
@@ -47,7 +58,7 @@ module.exports = {
           //upload the image
           req.file('avatar').upload({
               dirname: require('path').resolve(sails.config.appPath, 'assets/images'),
-              saveAs:username+".jpg"
+              saveAs:user_id+".jpg"
             },
             function (err, avatar_image) {
               console.log(avatar_image);
@@ -67,6 +78,7 @@ module.exports = {
       }//enf fnc
 
       async.waterfall([
+        findUserId,
         defineValue,
         createRecord
       ], function (err, result) {

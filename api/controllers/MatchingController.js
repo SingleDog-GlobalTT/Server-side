@@ -70,7 +70,7 @@ module.exports = {
           var answer_query = {
             category_id: category_id[i],
             user_id: user_id,
-            value: category_value
+            value: Math.abs(category_value/5*100)
           };
 
           AnswerLog.create(answer_query).exec(function (err, created) {
@@ -97,7 +97,32 @@ module.exports = {
 
   },
 
-  MatchingResult: function (req,res) {
+  MatchingCalculation: function (req,res) {
 
+    if(req.method == "GET") {
+
+      var user_id = req.param('user_id'),
+        category_value = req.param('category_value');
+
+      function findMatchUser(callback) {
+
+        var query = {select:['category_id', 'user_id']};
+
+        AnswerLog.find(query, function (err, answer_log) {
+
+        })
+
+      }
+
+      async.waterfall([
+        findMatchUser
+      ], function (err, result) {
+
+      });
+
+    }
+    return res.json({
+      status: "fail , should use GET method"
+    });
   }
 };

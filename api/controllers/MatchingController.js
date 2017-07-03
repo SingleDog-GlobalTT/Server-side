@@ -59,13 +59,16 @@ module.exports = {
 
       }
 
-      function answerRecord(category_id) {
+      function answerRecord(category_id, callback) {
 
         for(var i=0; i< category_id.length; i++)
         answer_query = {
           question_id: 1,
           category_id: i+1
         };
+
+        callback(null, category_id);
+
       }
 
       async.waterfall([

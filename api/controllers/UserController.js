@@ -5,7 +5,8 @@
  * @help        :: See http://sailsjs.org/#!/documentation/concepts/Controllers
  */
 
-var async = require('async');
+var async = require('async'),
+   typeOf = require('typeof');;
 
 module.exports = {
 
@@ -17,53 +18,46 @@ module.exports = {
 
     if(req.method == "POST") {
 
-      var user = req.param('uname');
-
-      console.log(user);
-      /* this will use in real system
-
-       var gender = req.param('gender'),
-       user = req.param('username'),
-       pass = req.param('password'),
-       email = req.param('email'),
-       age = req.param('age'),
-       postcode = req.param('postcode'),
-       user_image = req.file('image').upload(function (err, upload_file) {
-
-       });
-       */
-
-      return res.json({
-        status: 'Success',
-        username: user
-      });
-    }
-    else{
       /*-----------THIS IS FOR TEST/DEBUG-----------------*/
       function defineValue(callback) {
 
-        var gender = 1,
-          user = "endopasmic",
-          pass = "00236263",
-          email = "varit.asawavetvutt@gmail.com",
-          age = 1,
-          postcode = 5250066,
+        var gender = req.param('gender'),
+          username = req.param('username'),
+          password = req.param('password'),
+          email = req.param('email'),
+          year = req.param('year'),
+          month = req.param('month'),
+          day = req.param('day'),
+          tel = req.param('tel'),
+          postcode = req.param('postcode'),
           query_create_user = {
             gender: gender,
-            username: user,
-            password: pass,
+            username: username,
+            password: password,
             email: email,
-            age: age,
+            year: year,
+            month: month,
+            day: day,
+            tel: tel,
             postcode: postcode
           };
+
+        console.log("data: ",req.param('data'));
+
+          //upload the image
+          req.file('avatar').upload({
+              dirname: require('path').resolve(sails.config.appPath, 'assets/images'),
+              saveAs:username+".jpg"
+            },
+            function (err, avatar_image) {
+              console.log(avatar_image);
+            });
 
         callback(null, query_create_user);
 
       }//end func
 
       function createRecord(query_create_user, callback) {
-
-        console.log("create data: ", query_create_user);
 
         User.create(query_create_user).exec(function (err, record) {
           console.log('created: ', record);
@@ -76,11 +70,14 @@ module.exports = {
         defineValue,
         createRecord
       ], function (err, result) {
+        return res.json({
+          status: 'Success'
+        });
 
       });
 
-      /*-----------THIS IS FOR TEST/DEBUG-----------------*/
-
+    }//end if
+    else{
       return res.json({status: "Error"});
     }
   },

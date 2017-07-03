@@ -19,8 +19,18 @@ module.exports = {
       type: 'string',
       size: 200
     },
-    age:{
+    year:{
+      type:'integer'
+    },
+    month:{
+      type:'integer'
+    },
+    day:{
       type: 'integer'
+    },
+    tel:{
+      type: 'string',
+      size: 200
     },
     gender:{
       type: 'integer'

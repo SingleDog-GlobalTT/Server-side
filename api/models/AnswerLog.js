@@ -16,7 +16,7 @@ module.exports = {
       type: 'integer'
     },
     value: {
-      type: 'float',
+      type: 'integer',
       size: 100
     }
 

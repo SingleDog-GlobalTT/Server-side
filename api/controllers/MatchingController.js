@@ -66,11 +66,14 @@ module.exports = {
 
       function answerRecord(category_value, callback) {
 
-        for(var i=0; i< answer_value.length; i++) {
+        for(var i=0; i< 4; i++) {
+
+          console.log("category_value", category_value);
+
           var answer_query = {
-            category_id: category_id[i],
+            category_id: i+1,
             user_id: user_id,
-            value: Math.abs(category_value/5*100)
+            value: category_value[i]/5*100
           };
 
           AnswerLog.create(answer_query).exec(function (err, created) {
@@ -110,6 +113,11 @@ module.exports = {
 
         AnswerLog.find(query, function (err, answer_log) {
 
+          if(!user_id){//should not be a same user id
+            console.log("answer_log", answer_log);
+          }
+
+          callback();
         })
 
       }

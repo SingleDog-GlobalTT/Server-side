@@ -40,14 +40,26 @@ module.exports = {
                             "INNER JOIN user \n";
                             //"ON question.user_id = user.user_id";
         }
-        else {
-          /*
+        else if(question_type_id == 1) {
+
+          console.log("question_type_id: ", question_type_id);
+
           question_query = {
             select: ['question_name'],
             where: {question_type:question_type_id},
             limit: question_num
           };
-          */
+
+        }
+        else if(question_type_id == 2){
+
+          console.log("question_type_id: ", question_type_id);
+
+          question_query = {
+            select: ['question_name'],
+            where: {question_type:question_type_id},
+            limit: question_num
+          };
         }
 
         Question.query(question_query,function (err, question_name) {

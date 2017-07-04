@@ -46,10 +46,11 @@ module.exports = {
 
           console.log("question_type_id: ", question_type_id);
 
-          question_query = "SELECT question.question_name, question.user_id, user.username, question.createdAt \n"+
+          question_query = "SELECT question.question_name, question.user_id, user.username, question.createdAt, question.question_type_id  \n"+
             "FROM `question` \n"+
             "INNER JOIN user \n"+
-            "ON question.question_type_id = "+ question_type_id+"\n"+
+            "ON question.user_id = user.user_id \n"+
+            "WHERE question.question_type_id ="+question_type_id+
             "LIMIT "+question_num
 
         }
@@ -57,10 +58,12 @@ module.exports = {
 
           console.log("question_type_id: ", question_type_id);
 
-          question_query = "SELECT question.question_name, question.user_id, user.username, question.createdAt \n"+
+          question_query = "SELECT question.question_name, question.user_id, user.username, question.createdAt, question.question_type_id  \n"+
             "FROM `question` \n"+
             "INNER JOIN user \n"+
-            "ON question.question_type_id = "+ question_type_id
+            "ON question.user_id = user.user_id \n"+
+            "WHERE question.question_type_id ="+question_type_id+
+            "LIMIT "+question_num
         }
 
         Question.query(question_query,function (err, question_name) {

@@ -100,6 +100,9 @@ module.exports = {
 
   },
 
+  /*
+  * feature:
+  * */
   MatchingCalculation: function (req,res) {
 
     if(req.method == "GET") {
@@ -125,6 +128,10 @@ module.exports = {
       async.waterfall([
         findMatchUser
       ], function (err, result) {
+
+          return res.json({
+            status: result
+          });
 
       });
 

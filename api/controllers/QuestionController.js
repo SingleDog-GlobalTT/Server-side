@@ -173,7 +173,7 @@ module.exports = {
 
   AddScore: function (req,res) {
 
-    if(req.method == "GET") {
+    if(req.method == "POST") {
 
       var question_id = req.param('question_id'),
         score = req.param('score'),

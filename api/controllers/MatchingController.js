@@ -101,7 +101,8 @@ module.exports = {
   },
 
   /*
-  * feature:
+  * feature: find the matching value tha]
+  * note: gen have to be a opposite
   * */
   MatchingCalculation: function (req,res) {
 

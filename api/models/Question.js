@@ -22,6 +22,10 @@ module.exports = {
     question_name: {
       type: 'string',
       size: 200
+    },
+    question_score: {
+      type: 'int',
+      size: 200
     }
   }
 };

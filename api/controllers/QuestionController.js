@@ -47,7 +47,7 @@ module.exports = {
 
           console.log("question_type_id: ", question_type_id);
 
-          question_query = "SELECT question.question_name, question.user_id, user.username, question.createdAt, question.question_type_id  \n"+
+          question_query = "SELECT question.question_name, question.user_id, user.username, question.createdAt, question.question_type_id, category_id  \n"+
             "FROM `question` \n"+
             "INNER JOIN user \n"+
             "ON question.user_id = user.user_id \n"+
@@ -59,7 +59,7 @@ module.exports = {
 
           console.log("question_type_id: ", question_type_id);
 
-          question_query = "SELECT question.question_name, question.user_id, user.username, question.createdAt, question.question_type_id  \n"+
+          question_query = "SELECT question.question_name, question.user_id, user.username, question.createdAt, question.question_type_id, category_id  \n"+
             "FROM `question` \n"+
             "INNER JOIN user \n"+
             "ON question.user_id = user.user_id \n"+
@@ -150,6 +150,37 @@ module.exports = {
     }
     else{
       returnQuestion(res,error_msg);
+    }
+
+  },
+
+  AddScore: function (req,res) {
+    if(req.method == "POST"){
+
+      var question_id = param('question_id'),
+        score = param('score'),
+        user_id = param('user_id');
+
+      function defineQuery(callback) {
+        var query = {question_id: question_id};
+        callback(null, query)
+      }
+
+      function recordScore(query, callback) {
+
+        Question.update(query);
+
+      }
+
+      async.waterfall([
+        defineQuery,
+        recordScore
+      ],function (err, result) {
+        res.json();
+      })
+    }
+    else{
+      res.json({status: "Please use POST request"});
     }
 
   }

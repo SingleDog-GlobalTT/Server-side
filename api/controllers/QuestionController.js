@@ -30,6 +30,8 @@ module.exports = {
           question_num = req.param('question_num'),
           question_num_default = 14;
 
+        console.log("question_num: ", question_num);
+
         if(question_num == null){
           question_num = question_num_default;
         }
@@ -37,8 +39,8 @@ module.exports = {
         if(question_type_id == 0){
           question_query = "SELECT question.question_name, question.user_id, user.username, question.createdAt \n"+
                             "FROM `question` \n"+
-                            "INNER JOIN user \n";
-                            //"ON question.user_id = user.user_id";
+                            "INNER JOIN user \n"+
+                            "LIMIT = 4";
         }
         else if(question_type_id == 1) {
 
@@ -47,7 +49,8 @@ module.exports = {
           question_query = "SELECT question.question_name, question.user_id, user.username, question.createdAt \n"+
             "FROM `question` \n"+
             "INNER JOIN user \n"+
-            "ON question.question_type_id = "+ question_type_id
+            "ON question.question_type_id = "+ question_type_id+"\n"+
+            "LIMIT "+question_num
 
         }
         else if(question_type_id == 2){

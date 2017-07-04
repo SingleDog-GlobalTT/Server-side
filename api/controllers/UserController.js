@@ -6,7 +6,9 @@
  */
 
 var async = require('async'),
-   typeOf = require('typeof');
+   typeOf = require('typeof'),
+  ageCalculator = require('age-calculator');
+
 
 module.exports = {
 
@@ -17,6 +19,8 @@ module.exports = {
   Register: function (req, res) {
 
     if(req.method == "POST") {
+
+      console.log("POSt data has come");
 
       function findUserId(callback) {
         var last_id_query = {
@@ -82,6 +86,9 @@ module.exports = {
         defineValue,
         createRecord
       ], function (err, result) {
+
+        console.log(err);
+
         return res.json({
           status: 'Success'
         });
@@ -163,19 +170,29 @@ module.exports = {
    */
   Profile: function (req, res) {
 
+    function getAge(d1, d2){
+      d2 = d2 || new Date();
+      var diff = d2.getTime() - d1.getTime();
+      return Math.floor(diff / (1000 * 60 * 60 * 24 * 365.25));
+    }
+
     if(req.method == "GET"){
 
       var user_id = req.param('user_id'),
         profile_query = {
-          select:['username','email','postcode'],//in future will select user_similarity and image link
+          select:['username','email','postcode', 'year', 'month', 'day'],//in future will select user_similarity and image link
           where:{user_id: user_id}
         };
 
       User.find(profile_query).exec(function (err, records) {
+
+        var user_age = getAge(new Date(records[0].year, records[0].month, records[0].day));
+
         return res.json({
           username: records[0].username,
           email: records[0].email,
-          postcode: records[0].postcode
+          postcode: records[0].postcode,
+          age: user_age
 
         })
       });

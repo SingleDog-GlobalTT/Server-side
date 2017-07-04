@@ -117,7 +117,7 @@ module.exports = {
             console.log("answer_log", answer_log);
           }
 
-          callback();
+          callback(null, "done");
         })
 
       }
@@ -129,8 +129,10 @@ module.exports = {
       });
 
     }
-    return res.json({
-      status: "fail , should use GET method"
-    });
+    else {
+      return res.json({
+        status: "fail , should use GET method"
+      });
+    }
   }
 };

@@ -16,6 +16,8 @@ module.exports = {
 
     if(req.method == "GET"){
 
+      var sort_by = req.param('sort_by');
+
 
       /*
        * feature: make a query for the questions's content
@@ -25,7 +27,7 @@ module.exports = {
        *                  <1:query question of the user>
        *                      <2:query question of the admin>
        * */
-      function queryQuestion(question_type_id,callback) {
+      function queryQuestion(question_type_id, sort_query,callback) {
 
         var question_query,
           question_num = req.param('question_num'),
@@ -45,14 +47,15 @@ module.exports = {
         }
         else if(question_type_id == 1) {
 
-          console.log("question_type_id: ", question_type_id);
+          console.log("sort_by: ", sort_query);
 
           question_query = "SELECT question.question_name, question.user_id, user.username, question.createdAt, question.question_type_id, category_id  \n"+
             "FROM `question` \n"+
             "INNER JOIN user \n"+
             "ON question.user_id = user.user_id \n"+
             "WHERE question.question_type_id ="+question_type_id+" \n"+
-            "LIMIT "+question_num
+            sort_query+"\n"+
+            "LIMIT "+question_num;
 
         }
         else if(question_type_id == 2){
@@ -68,7 +71,7 @@ module.exports = {
         }
 
         Question.query(question_query,function (err, question_name) {
-          callback(null, question_name);
+            callback(null, question_name);
         });
 
       }
@@ -78,16 +81,29 @@ module.exports = {
        * */
       function findQuestionType(callback) {
 
-        var question_type = req.param('question_type');
+        var question_type = req.param('question_type'),
+          sort_query = "";
 
+        //find sort condition
+        if(sort_by == 0 || sort_by == null || sort_by == "undefined"){
+          sort_query = "ORDER BY question.question_id DESC";
+        }
+        else if(sort_by == 1){
+          sort_query = "ORDER BY question.question_score DESC";
+        }
+        else if(sort_by == 2){
+          sort_query = "ORDER BY question.question_id DESC";
+        }
+
+        //find question type condition
         if(question_type == 1){//for query the user's question
-          callback(null, 1);
+          callback(null, 1, sort_query);
         }
         else if(question_type == 2){//for query the admin's question
-          callback(null, 2);
+          callback(null, 2, sort_query);
         }
         else if(question_type == null || question_type==0){// for query all the question
-          callback(null, 0);
+          callback(null, 0, sort_query);
         }
         else{//for error case
           returnQuestion(error_msg);
@@ -155,29 +171,68 @@ module.exports = {
   },
 
   AddScore: function (req,res) {
-    if(req.method == "POST"){
 
-      var question_id = param('question_id'),
-        score = param('score'),
-        user_id = param('user_id');
+    if(req.method == "GET") {
 
-      function defineQuery(callback) {
-        var query = {question_id: question_id};
-        callback(null, query)
+      var question_id = req.param('question_id'),
+        score = req.param('score'),
+        user_id = req.param('user_id');
+
+      console.log("GET data: ", question_id, score, user_id);
+
+      function takeCurrentScore(callback) {
+
+        var question_query = {
+          select: ['question_score'],
+          where: {question_id: question_id}
+        };
+
+        //find current score of the question_id
+        Question.find(question_query, function (err, score_record) {
+
+          //console.log("score_record: ", score_record[0].question_score);
+          callback(null, score_record[0].question_score);
+        })
       }
 
-      function recordScore(query, callback) {
+      function defineQuery(score_record, callback) {
 
-        Question.update(query);
+        var update_score = parseInt(score_record) + parseInt(score),
+          query_find = {question_id: question_id},
+          query_update = {question_score: update_score};
+
+        //console.log(query_find, query_update);
+
+        callback(null, query_find, query_update);
 
       }
+
+      function recordScore(query_find, query_update, callback) {
+        
+        Question.update(query_find, query_update).exec(function (err,score) {
+
+          if(err)
+          {
+            console.log(err)
+          }
+
+          console.log(score);
+
+          callback(null, score);
+        });
+
+
+
+      }//end func
 
       async.waterfall([
+        takeCurrentScore,
         defineQuery,
         recordScore
-      ],function (err, result) {
-        res.json();
+      ], function (err, score) {
+        res.json({status: score});
       })
+
     }
     else{
       res.json({status: "Please use POST request"});

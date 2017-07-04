@@ -143,7 +143,8 @@ module.exports = {
         var question_query = {
           category_id: category_id,
           question_type_id:user_question_id,
-          question_name: question_name
+          question_name: question_name,
+          question_score:0
         };
 
         Question.create(question_query).exec(function (err, insert_result) {
@@ -208,7 +209,7 @@ module.exports = {
       }
 
       function recordScore(query_find, query_update, callback) {
-        
+
         Question.update(query_find, query_update).exec(function (err,score) {
 
           if(err)

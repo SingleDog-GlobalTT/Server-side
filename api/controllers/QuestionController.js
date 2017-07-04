@@ -35,7 +35,7 @@ module.exports = {
         }
 
         if(question_type_id == 0){
-          question_query = "SELECT question.question_name, question.user_id, user.username \n"+
+          question_query = "SELECT question.question_name, question.user_id, user.username, question.createdAt \n"+
                             "FROM `question` \n"+
                             "INNER JOIN user \n";
                             //"ON question.user_id = user.user_id";
@@ -44,7 +44,7 @@ module.exports = {
 
           console.log("question_type_id: ", question_type_id);
 
-          question_query = "SELECT question.question_name, question.user_id, user.username \n"+
+          question_query = "SELECT question.question_name, question.user_id, user.username, question.createdAt \n"+
             "FROM `question` \n"+
             "INNER JOIN user \n"+
             "ON question.question_type_id = "+ question_type_id
@@ -54,7 +54,7 @@ module.exports = {
 
           console.log("question_type_id: ", question_type_id);
 
-          question_query = "SELECT question.question_name, question.user_id, user.username \n"+
+          question_query = "SELECT question.question_name, question.user_id, user.username, question.createdAt \n"+
             "FROM `question` \n"+
             "INNER JOIN user \n"+
             "ON question.question_type_id = "+ question_type_id
@@ -116,9 +116,6 @@ module.exports = {
         category_id = req.param('category_id'),
         user_id = req.param('user_id'),
         user_question_id = 1;
-
-
-      question.findOrCreate();
 
       function questionRecord(callback) {
         var question_query = {

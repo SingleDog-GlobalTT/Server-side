@@ -16,14 +16,15 @@ module.exports = {
 
     if(req.method == "GET"){
 
+
       /*
-      * feature: make a query for the questions's content
-      * parameter:
-      *   integer -> type of the question
-      *              <0:query all the question>
-      *                  <1:query question of the user>
-      *                      <2:query question of the admin>
-      * */
+       * feature: make a query for the questions's content
+       * parameter:
+       *   integer -> type of the question
+       *              <0:query all the question>
+       *                  <1:query question of the user>
+       *                      <2:query question of the admin>
+       * */
       function queryQuestion(question_type_id,callback) {
 
         var question_query,
@@ -38,9 +39,9 @@ module.exports = {
 
         if(question_type_id == 0){
           question_query = "SELECT question.question_name, question.user_id, user.username, question.createdAt \n"+
-                            "FROM `question` \n"+
-                            "INNER JOIN user \n"+
-                            "LIMIT = 4";
+            "FROM `question` \n"+
+            "INNER JOIN user \n"+
+            "LIMIT = 4";
         }
         else if(question_type_id == 1) {
 
@@ -50,7 +51,7 @@ module.exports = {
             "FROM `question` \n"+
             "INNER JOIN user \n"+
             "ON question.user_id = user.user_id \n"+
-            "WHERE question.question_type_id ="+question_type_id+
+            "WHERE question.question_type_id ="+question_type_id+" \n"+
             "LIMIT "+question_num
 
         }
@@ -62,7 +63,7 @@ module.exports = {
             "FROM `question` \n"+
             "INNER JOIN user \n"+
             "ON question.user_id = user.user_id \n"+
-            "WHERE question.question_type_id ="+question_type_id+
+            "WHERE question.question_type_id ="+question_type_id+" \n"+
             "LIMIT "+question_num
         }
 
@@ -73,8 +74,8 @@ module.exports = {
       }
 
       /*
-      * feature: query the list of the question from the DB.
-      * */
+       * feature: query the list of the question from the DB.
+       * */
       function findQuestionType(callback) {
 
         var question_type = req.param('question_type');
@@ -106,7 +107,6 @@ module.exports = {
         })
 
       });
-
     }
     else{
       returnQuestion(error_msg);

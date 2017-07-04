@@ -49,7 +49,7 @@ module.exports = {
 
           console.log("sort_by: ", sort_query);
 
-          question_query = "SELECT question.question_name, question.user_id, user.username, question.createdAt, question.question_type_id, category_id  \n"+
+          question_query = "SELECT question.question_name, question.user_id, user.username, question.createdAt, question.question_type_id, category_id, question_score  \n"+
             "FROM `question` \n"+
             "INNER JOIN user \n"+
             "ON question.user_id = user.user_id \n"+

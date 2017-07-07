@@ -94,7 +94,7 @@ module.exports = {
           answer_query.push({
             category_id: i+1,
             user_id: user_id,
-            value: category_value[i]/5*100
+            value: category_value[i]+4
           });
 
         }// end loop
@@ -241,7 +241,7 @@ module.exports = {
           user_age.push(getAge(new Date(user_detail[i].year, user_detail[i].month, user_detail[i].day) ) );
 
           console.log("user_age: ", user_age);
-          
+
         }
         callback(null, match_user, user_detail, user_age);
       });

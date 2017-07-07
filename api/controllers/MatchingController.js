@@ -76,14 +76,16 @@ module.exports = {
             value: category_value[i]/5*100
           };
 
+          console.log("answer_query: ", answer_query);
+
+
           AnswerLog.create(answer_query).exec(function (err, created) {
             console.log(created);
+            callback(null, category_value);
           });
+
         }
-
-        callback(null, category_value);
-
-      }
+      }//end func
 
       async.waterfall([
         answerCalculate,
@@ -108,25 +110,76 @@ module.exports = {
 
     if(req.method == "GET") {
 
-      var user_id = req.param('user_id'),
-        category_value = req.param('category_value');
+      var user_id = req.param('user_id');
 
-      function findMatchUser(callback) {
+      /*
+      * feature: find least answer value for current user.
+      * */
+      function findCurrentUserCategoryLog(callback) {
 
-        var query = {select:['category_id', 'user_id']};
+        var category_query= {
+          select:['answer_log_id', 'category_id', 'value'],
+          sort:'answer_log_id DESC',
+          limit: 4,
+          where: {user_id: user_id}
+        };
 
-        AnswerLog.find(query, function (err, answer_log) {
+        AnswerLog.find(category_query, function (err, category_value) {
 
-          if(!user_id){//should not be a same user id
-            console.log("answer_log", answer_log);
+          var category_value_num = category_value.length,
+            value = [];
+
+
+          if(err){
+            console.log(err);
           }
 
-          callback(null, "done");
-        })
+          //make value array
+          for(var i=0; i<category_value_num; i++){
+            value.push(category_value[i].value);
+          }
+
+          callback(null, value);
+
+        });
+      }//end func
+
+      function findOtherUserCategoryLog(current_user_category_value, callback) {
+
+        var other_category_query = {
+          select:['answer_log_id', 'category_id', 'user_id', 'value'],
+          where: { user_id:{'!':user_id} }
+        },
+          other_value = {user_id : [], value:[]};
+
+        AnswerLog.find(other_category_query, function (err, other_category_value) {
+
+          var other_category_value_num = other_category_value.length;
+
+          if(err){console.log(err);}
+
+          console.log("other_category_value", other_category_value);
+
+          //make value array
+          for(var i=0; i<other_category_value_num; i++){
+            other_value.user_id.push(other_category_value[i].user_id);
+            other_value.value.push(other_category_value[i].value);
+          }
+
+          callback(current_user_category_value);
+
+
+        });
 
       }
 
+      function findMatchUser(current_user_category_value, other_user_category_value, callback) {
+
+      }//end func
+
       async.waterfall([
+        findCurrentUserCategoryLog,
+        findOtherUserCategoryLog,
         findMatchUser
       ], function (err, result) {
 

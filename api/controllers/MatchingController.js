@@ -30,7 +30,7 @@ module.exports = {
         var answer_yes = 1,
           answer_no = -1,
           answer_non = 0,
-          category_value = [0,0,0,0];
+          category_value = [4,4,4,4];
 
 
         function addValue(category_number, answer_value) {
@@ -111,6 +111,8 @@ module.exports = {
         answerCalculate,
         defineAnswerLog
       ], function (err,answer_list) {
+        console.log("answer_list: ", answer_list);
+
         return res.json({
           answer_list: answer_list
         })

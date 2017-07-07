@@ -40,7 +40,7 @@ module.exports = {
         }
 
         if(question_type_id == 0){
-          question_query = "SELECT question.question_id question.question_name, question.user_id, user.username, question.createdAt \n"+
+          question_query = "SELECT question.question_id, question.question_name, question.user_id, user.username, question.createdAt \n"+
             "FROM `question` \n"+
             "INNER JOIN user \n"+
             "LIMIT = 4";
@@ -49,7 +49,7 @@ module.exports = {
 
           console.log("sort_by: ", sort_query);
 
-          question_query = "SELECT question.question_id question.question_name, question.user_id, user.username, question.createdAt, question.question_type_id, category_id, question_score  \n"+
+          question_query = "SELECT question.question_id, question.question_name, question.user_id, user.username, question.createdAt, question.question_type_id, category_id, question_score  \n"+
             "FROM `question` \n"+
             "INNER JOIN user \n"+
             "ON question.user_id = user.user_id \n"+
@@ -62,7 +62,7 @@ module.exports = {
 
           console.log("question_type_id: ", question_type_id);
 
-          question_query = "SELECT question.question_id question.question_name, question.user_id, user.username, question.createdAt, question.question_type_id, category_id, question_score  \n"+
+          question_query = "SELECT question.question_id, question.question_name, question.user_id, user.username, question.createdAt, question.question_type_id, category_id, question_score  \n"+
             "FROM `question` \n"+
             "INNER JOIN user \n"+
             "ON question.user_id = user.user_id \n"+

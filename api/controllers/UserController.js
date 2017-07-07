@@ -115,10 +115,8 @@ module.exports = {
           login_query = {
             select: ['user_id'],
             where: {
-              or: [
-                {username: username_view},
-                {password: password_view}
-              ]
+                username: username_view,
+                password: password_view
             }
           };
 

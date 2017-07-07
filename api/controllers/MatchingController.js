@@ -5,6 +5,7 @@
 var async = require('async');
 var unique = require('array-unique');
 
+
 module.exports = {
 
   /*
@@ -216,14 +217,48 @@ module.exports = {
 
       }//end func
 
+      function findUserDetail(match_user, callback) {
+
+        function getAge(d1, d2){
+          d2 = d2 || new Date();
+          var diff = d2.getTime() - d1.getTime();
+          return Math.floor(diff / (1000 * 60 * 60 * 24 * 365.25));
+        }
+
+
+        var user_query = {
+         select:['user_id', 'username', 'year', 'month', 'day', 'postcode'],
+         where:{user_id: match_user}
+       };
+
+      User.find(user_query, function (err, user_detail) {
+        console.log("user_detail", user_detail);
+
+        var user_age = [];
+
+        for(var i=0; i< user_detail.length; i++) {
+
+          user_age.push(getAge(new Date(user_detail[i].year, user_detail[i].month, user_detail[i].day) ) );
+
+          console.log("user_age: ", user_age);
+          
+        }
+        callback(null, match_user, user_detail, user_age);
+      });
+
+      }
+
       async.waterfall([
         findCurrentUserCategoryLog,
         findOtherUserCategoryLog,
-        findMatchUser
-      ], function (err, match_user) {
+        findMatchUser,
+        findUserDetail
+      ], function (err, match_user, user_detail, user_age) {
 
           return res.json({
-            answer: match_user
+            user_id: match_user,
+            user_detail: user_detail,
+            user_age: user_age
           });
 
       });

@@ -6,6 +6,8 @@
   "keywords": [],
   "dependencies": {
     "age-calculator": "^1.0.0",
+    "array-sum": "^1.0.0",
+    "array-unique": "^0.3.2",
     "async": "^2.4.0",
     "ejs": "2.3.4",
     "grunt": "1.0.1",
@@ -21,6 +23,7 @@
     "grunt-sails-linker": "~0.10.1",
     "grunt-sync": "0.5.2",
     "include-all": "~0.1.6",
+    "postal-code-jp": "^0.2.5",
     "rc": "1.0.1",
     "sails": "~0.12.4",
     "sails-disk": "~0.10.9",

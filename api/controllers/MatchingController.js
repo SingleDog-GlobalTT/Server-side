@@ -193,8 +193,8 @@ module.exports = {
 
       function combineCategory(current_user_category_value, other_user_category_value, callback) {
 
-        //console.log("current user: ", current_user_category_value);
-        //console.log("other user: ", other_user_category_value);
+        console.log("current user: ", current_user_category_value);
+        console.log("other user: ", other_user_category_value);
 
         //combine current user value
         var current_user_length = current_user_category_value.length,
@@ -203,18 +203,18 @@ module.exports = {
           other_user_combine_value = [],
           counter =0,
           index = 0,
-          value = [];
-
-        //combine current user values
-        for(var i=0; i<current_user_length; i++){
-          current_user_combine_value += current_user_category_value[i];
-          //console.log("current_user_combine_value: ", current_user_combine_value);
-        }
+          other_value = [],
+          current_value = [],
+          compare_value = [],
+          compare = [];
 
         //combine other user values
         for(var l=0; l< other_user_length; l++){
 
-          value[counter] = other_user_category_value[l].value;
+          other_value[counter] = other_user_category_value[l].value;
+          current_value[counter] = current_user_category_value[counter];
+          compare[counter] = Math.abs(current_user_category_value[counter] - other_user_category_value[l].value);
+          //console.log("compare[counter]: ", compare[counter]);
           //console.log("counter: ", counter);
           //console.log("l: ", l);
           //console.log("index: ", index);
@@ -223,51 +223,54 @@ module.exports = {
           if(counter == 4){
 
             //console.log("counter activate: ", value);
-            other_user_combine_value.push({user_id:other_user_category_value[index].user_id, value: value});
+            compare_value.push({user_id:other_user_category_value[index].user_id, value: compare });
             index += 4;
             //console.log("counter: ", counter);
             //console.log("l: ", l);
             //console.log("index: ", index);
             counter = 0;
-            value = [];
+            compare = [];
           }
 
         }//end loop
 
-        //console.log("other_user_combine_value: ", other_user_combine_value);
+        console.log("compare_value: ", compare_value);
+
+        //combine the array
         var combine_array_value = [],
         sum_array;
 
-        for(var x=0; x<other_user_combine_value.length;x++){
+        for(var x=0; x<compare_value.length;x++){
 
-          sum_array = arraySum(other_user_combine_value[x].value);
+          sum_array = arraySum(compare_value[x].value);
 
-          combine_array_value.push({user_id: other_user_combine_value[x].user_id, combine_value: sum_array});
+          combine_array_value.push({user_id: compare_value[x].user_id, combine_value: sum_array});
         }
 
-        //console.log("combine_array_value: ", combine_array_value);
+        console.log("combine_array_value: ", combine_array_value);
 
-        callback(null, current_user_combine_value ,combine_array_value);
+        callback(null ,combine_array_value);
 
       }//end func
 
-      function compareUser(current_user_combine_value, combine_array_value, callback) {
-        console.log("current: ", current_user_combine_value);
-        console.log("other: ", combine_array_value);
+      function compareUser(combine_array_value, callback) {
+        //console.log("current: ", current_user_combine_value);
+        //console.log("other: ", combine_array_value);
 
         var compare_value = [];
 
         for(var i=0; i< combine_array_value.length;i++){
+
           compare_value[i] =  {
             user_id: combine_array_value[i].user_id,
-            similar:((32-(Math.abs(current_user_combine_value - combine_array_value[i].combine_value) ) )/32)*100
+            similar:((32 - combine_array_value[i].combine_value )/32)*100
           };
 
-          console.log("calculate debug: ", combine_array_value[i].combine_value - current_user_combine_value);
+          //console.log("calculate debug: ", combine_array_value[i].combine_value - current_user_combine_value);
 
         }
 
-        console.log("compare_value: ",compare_value);
+        //console.log("compare_value: ",compare_value);
 
         callback(null, compare_value);
 
@@ -288,7 +291,7 @@ module.exports = {
           return Math.floor(diff / (1000 * 60 * 60 * 24 * 365.25));
         }
 
-        console.log("compare_value: ", compare_value);
+        //console.log("compare_value: ", compare_value);
 
         for(var i=0; i<compare_value.length;i++){
           user_id[i] = compare_value[i].user_id;
@@ -301,13 +304,13 @@ module.exports = {
 
         User.find(user_query, function (err, user_detail) {
 
-          console.log("user_detail: ", user_detail);
+          //console.log("user_detail: ", user_detail);
 
           for(var i=0; i< user_detail.length; i++) {
 
             user_age.push(getAge(new Date(user_detail[i].year, user_detail[i].month, user_detail[i].day) ) );
 
-            console.log("user_age: ", user_age);
+            //console.log("user_age: ", user_age);
 
           }
 

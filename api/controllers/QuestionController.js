@@ -66,25 +66,13 @@ module.exports = {
             "INNER JOIN user \n"+
             "ON question.user_id = user.user_id \n"+
             "WHERE question.question_type_id ="+question_type_id+" \n"+
+            sort_query+"\n"+
             "LIMIT "+question_num
         }
 
         Question.query(question_query,function (err, question_name) {
             callback(null, question_name);
         });
-
-      }
-
-      function findSortType() {
-
-        if(sort_by == 0){
-        }
-        else if(sort_by == 1){
-
-        }
-        else if(sort_by == 2){
-
-        }
 
       }
 

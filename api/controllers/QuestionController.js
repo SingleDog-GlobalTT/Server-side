@@ -38,11 +38,14 @@ module.exports = {
           question_num = question_num_default;
         }
 
-        if(question_type_id == 0){
-          question_query = "SELECT question.question_id, question.question_name, question.user_id, user.username, question.createdAt \n"+
+        if(question_type_id == 0 || question_type_id == null || question_type_id == "undefined"){
+          console.log("no condition case");
+
+          question_query = "SELECT question.question_id, question.question_name, question.user_id, user.username, question.createdAt, question.question_type_id, category_id, question_score \n"+
             "FROM `question` \n"+
             "INNER JOIN user \n"+
-            "LIMIT = 4";
+            "ON question.user_id = user.user_id \n"+
+            "LIMIT 14";
         }
         else if(question_type_id == 1) {
 

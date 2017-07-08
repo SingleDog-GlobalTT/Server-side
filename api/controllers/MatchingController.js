@@ -4,6 +4,7 @@
 
 var async = require('async');
 var unique = require('array-unique');
+var arraySum = require('array-sum');
 
 
 module.exports = {
@@ -94,7 +95,7 @@ module.exports = {
           answer_query.push({
             category_id: i+1,
             user_id: user_id,
-            value: category_value[i]+4
+            value: category_value[i]
           });
 
         }// end loop
@@ -171,7 +172,7 @@ module.exports = {
           select:['answer_log_id', 'category_id', 'user_id', 'value'],
           where: { user_id:{'!':user_id} }
         },
-          other_value = {user_id : [], value:[]};
+          other_value_all = [];
 
         AnswerLog.find(other_category_query, function (err, other_category_value) {
 
@@ -179,86 +180,153 @@ module.exports = {
 
           if(err){console.log(err);}
 
-          //make value array
+          //make all combine array
           for(var i=0; i<other_category_value_num; i++){
-            other_value.user_id.push(other_category_value[i].user_id);
-            other_value.value.push(other_category_value[i].value);
+            other_value_all[i] = ({user_id: other_category_value[i].user_id,value: other_category_value[i].value});
           }
 
-          callback(null, current_user_category_value, other_value);
+          callback(null, current_user_category_value, other_value_all);
 
         });
 
       }
 
-      function findMatchUser(current_user_category_value, other_user_category_value, callback) {
+      function combineCategory(current_user_category_value, other_user_category_value, callback) {
 
-        console.log("current user: ", current_user_category_value);
-        console.log("other user: ", other_user_category_value);
+        //console.log("current user: ", current_user_category_value);
+        //console.log("other user: ", other_user_category_value);
 
-        var matching_range = 5,
-          other_user_length = other_user_category_value.user_id.length,
-          match_user = [];
+        //combine current user value
+        var current_user_length = current_user_category_value.length,
+          other_user_length = other_user_category_value.length,
+          current_user_combine_value = 0,
+          other_user_combine_value = [],
+          counter =0,
+          index = 0,
+          value = [];
 
-
-        for(var i=0; i<other_user_length; i++){
-
-          var matching_value = current_user_category_value[i]-other_user_category_value.value[i];
-
-          console.log(matching_value, matching_range);
-
-            if( matching_value <= Math.abs(matching_range)){//match
-              match_user.push(other_user_category_value.user_id[i]);
-            }
-
+        //combine current user values
+        for(var i=0; i<current_user_length; i++){
+          current_user_combine_value += current_user_category_value[i];
+          //console.log("current_user_combine_value: ", current_user_combine_value);
         }
 
-        var unique_match_user = unique(match_user);
+        //combine other user values
+        for(var l=0; l< other_user_length; l++){
 
-        callback(null, unique_match_user);
+          value[counter] = other_user_category_value[l].value;
+          //console.log("counter: ", counter);
+          //console.log("l: ", l);
+          //console.log("index: ", index);
+          counter++;
+
+          if(counter == 4){
+
+            //console.log("counter activate: ", value);
+            other_user_combine_value.push({user_id:other_user_category_value[index].user_id, value: value});
+            index += 4;
+            //console.log("counter: ", counter);
+            //console.log("l: ", l);
+            //console.log("index: ", index);
+            counter = 0;
+            value = [];
+          }
+
+        }//end loop
+
+        //console.log("other_user_combine_value: ", other_user_combine_value);
+        var combine_array_value = [],
+        sum_array;
+
+        for(var x=0; x<other_user_combine_value.length;x++){
+
+          sum_array = arraySum(other_user_combine_value[x].value);
+
+          combine_array_value.push({user_id: other_user_combine_value[x].user_id, combine_value: sum_array});
+        }
+
+        //console.log("combine_array_value: ", combine_array_value);
+
+        callback(null, current_user_combine_value ,combine_array_value);
 
       }//end func
 
-      function findUserDetail(match_user, callback) {
+      function compareUser(current_user_combine_value, combine_array_value, callback) {
+        console.log("current: ", current_user_combine_value);
+        console.log("other: ", combine_array_value);
 
+        var compare_value = [];
+
+        for(var i=0; i< combine_array_value.length;i++){
+          compare_value[i] =  {
+            user_id: combine_array_value[i].user_id,
+            similar:((32-(Math.abs(current_user_combine_value - combine_array_value[i].combine_value) ) )/32)*100
+          };
+
+          console.log("calculate debug: ", combine_array_value[i].combine_value - current_user_combine_value);
+
+        }
+
+        console.log("compare_value: ",compare_value);
+
+        callback(null, compare_value);
+
+      }
+
+      function findUserDetail(compare_value, callback) {
+
+        var user_id = [],
+          user_query,
+          user_age = [];
+
+        /*
+        * feature: convert from birthday to age
+        * */
         function getAge(d1, d2){
           d2 = d2 || new Date();
           var diff = d2.getTime() - d1.getTime();
           return Math.floor(diff / (1000 * 60 * 60 * 24 * 365.25));
         }
 
+        console.log("compare_value: ", compare_value);
 
-        var user_query = {
-         select:['user_id', 'username', 'year', 'month', 'day', 'postcode'],
-         where:{user_id: match_user}
-       };
-
-      User.find(user_query, function (err, user_detail) {
-        console.log("user_detail", user_detail);
-
-        var user_age = [];
-
-        for(var i=0; i< user_detail.length; i++) {
-
-          user_age.push(getAge(new Date(user_detail[i].year, user_detail[i].month, user_detail[i].day) ) );
-
-          console.log("user_age: ", user_age);
-
+        for(var i=0; i<compare_value.length;i++){
+          user_id[i] = compare_value[i].user_id;
         }
-        callback(null, match_user, user_detail, user_age);
-      });
+
+        user_query = {
+          select:['user_id', 'username', 'year', 'month', 'day', 'postcode'],
+          where:{user_id: user_id}
+        };
+
+        User.find(user_query, function (err, user_detail) {
+
+          console.log("user_detail: ", user_detail);
+
+          for(var i=0; i< user_detail.length; i++) {
+
+            user_age.push(getAge(new Date(user_detail[i].year, user_detail[i].month, user_detail[i].day) ) );
+
+            console.log("user_age: ", user_age);
+
+          }
+
+          callback(null, compare_value, user_detail, user_age);
+
+        });
 
       }
 
       async.waterfall([
         findCurrentUserCategoryLog,
         findOtherUserCategoryLog,
-        findMatchUser,
+        combineCategory,
+        compareUser,
         findUserDetail
-      ], function (err, match_user, user_detail, user_age) {
+      ], function (err, compare_value, user_detail, user_age) {
 
           return res.json({
-            user_id: match_user,
+            compare_value: compare_value,
             user_detail: user_detail,
             user_age: user_age
           });
